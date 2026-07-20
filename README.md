@@ -17,3 +17,7 @@ JSON Test Data
 Logger
 
 Screenshot on Failure
+
+## Current Improvements
+
+- Learning Git branching strategy
