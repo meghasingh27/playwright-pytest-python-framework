@@ -13,6 +13,22 @@ def pytest_addoption(parser):
         default="QA",
         help="Environment : QA/UAT/STAGE"
     )
+    parser.addoption(
+        "--browser",
+        action="store",
+        default=None,
+        help="Browser : chromium/firefox/webkit"
+    )
+    parser.addoption(
+        "--headless",
+        action="store_true",
+        help="Run browser in headless mode"
+    )
+    parser.addoption(
+        "--headed",
+        action="store_true",
+        help="Run browser in headed mode"
+    )
 
 
 @pytest.fixture(scope="function")
@@ -20,9 +36,18 @@ def setup(request):
 
     playwright = sync_playwright().start()
 
-    browser_name = ConfigReader.get_browser()
+    browser_name = (
+    request.config.getoption("--browser")
+    or ConfigReader.get_browser()
+    )
 
     headless = ConfigReader.get_headless()
+
+    if request.config.getoption("--headless"):
+        headless = True
+
+    if request.config.getoption("--headed"):
+        headless = False
 
     slow_mo = ConfigReader.get_slow_mo()
 
