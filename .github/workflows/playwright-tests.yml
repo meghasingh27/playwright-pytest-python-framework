@@ -9,3 +9,7 @@ on:
 jobs:
   playwright-test:
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
