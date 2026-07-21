@@ -81,22 +81,27 @@ jobs:
       - name: Execute Tests
         shell: bash
         run: |
+          BROWSER="${{ github.event.inputs.browser }}"
+          ENVIRONMENT="${{ github.event.inputs.environment }}"
+          HEADLESS="${{ github.event.inputs.headless }}"
+          MARKER="${{ github.event.inputs.marker }}"
 
-          CMD="pytest \
-          --browser=${{ github.event.inputs.browser || 'chromium' }} \
-          --env=${{ github.event.inputs.environment || 'QA' }}"
+          [[ -z "$BROWSER" ]] && BROWSER="chromium"
+          [[ -z "$ENVIRONMENT" ]] && ENVIRONMENT="QA"
 
-          if [[ "${{ github.event.inputs.marker }}" != "all" ]]; then
-            CMD="$CMD -m ${{ github.event.inputs.marker }}"
+          CMD="pytest --browser=$BROWSER --env=$ENVIRONMENT"
+
+          if [[ -n "$MARKER" && "$MARKER" != "all" ]]; then
+            CMD="$CMD -m $MARKER"
           fi
 
-          if [[ "${{ github.event.inputs.headless }}" == "true" ]]; then
+          if [[ "$HEADLESS" == "true" ]]; then
             CMD="$CMD --headless"
           fi
 
           echo "Running: $CMD"
 
-          eval $CMD
+          eval "$CMD"
 
       - name: Upload HTML Report
         if: always()
