@@ -12,6 +12,7 @@ on:
 
   workflow_dispatch:
     inputs:
+
       browser:
         description: "Select Browser"
         required: true
@@ -33,7 +34,7 @@ on:
           - STAGE
 
       headless:
-        description: "Run in Headless mode?"
+        description: "Run Headless?"
         required: true
         default: "true"
         type: choice
@@ -41,7 +42,18 @@ on:
           - "true"
           - "false"
 
+      marker:
+        description: "Select Test Suite"
+        required: true
+        default: all
+        type: choice
+        options:
+          - all
+          - smoke
+          - regression
+
 jobs:
+
   playwright-test:
 
     runs-on: ubuntu-latest
@@ -67,11 +79,24 @@ jobs:
           playwright install-deps
 
       - name: Execute Tests
+        shell: bash
         run: |
-          pytest \
-            --browser=${{ github.event.inputs.browser || 'chromium' }} \
-            --env=${{ github.event.inputs.environment || 'QA' }} \
-            --headless
+
+          CMD="pytest \
+          --browser=${{ github.event.inputs.browser || 'chromium' }} \
+          --env=${{ github.event.inputs.environment || 'QA' }}"
+
+          if [[ "${{ github.event.inputs.marker }}" != "all" ]]; then
+            CMD="$CMD -m ${{ github.event.inputs.marker }}"
+          fi
+
+          if [[ "${{ github.event.inputs.headless }}" == "true" ]]; then
+            CMD="$CMD --headless"
+          fi
+
+          echo "Running: $CMD"
+
+          eval $CMD
 
       - name: Upload HTML Report
         if: always()
