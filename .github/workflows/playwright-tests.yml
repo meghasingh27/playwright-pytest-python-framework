@@ -83,26 +83,30 @@ jobs:
         run: |
           BROWSER="${{ github.event.inputs.browser }}"
           ENVIRONMENT="${{ github.event.inputs.environment }}"
-          HEADLESS="${{ github.event.inputs.headless }}"
           MARKER="${{ github.event.inputs.marker }}"
 
           [[ -z "$BROWSER" ]] && BROWSER="chromium"
           [[ -z "$ENVIRONMENT" ]] && ENVIRONMENT="QA"
 
-          CMD="pytest --browser=$BROWSER --env=$ENVIRONMENT"
+          CMD="pytest --browser=$BROWSER --env=$ENVIRONMENT --headless"
 
           if [[ -n "$MARKER" && "$MARKER" != "all" ]]; then
             CMD="$CMD -m $MARKER"
           fi
 
-          if [[ "$HEADLESS" == "true" ]]; then
-            CMD="$CMD --headless"
+          # Only remove --headless if user explicitly selected false
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.headless }}" == "false" ]]; then
+            CMD="pytest --browser=$BROWSER --env=$ENVIRONMENT"
+
+            if [[ -n "$MARKER" && "$MARKER" != "all" ]]; then
+              CMD="$CMD -m $MARKER"
+            fi
           fi
 
           echo "Running: $CMD"
 
           eval "$CMD"
-
+          
       - name: Upload HTML Report
         if: always()
         uses: actions/upload-artifact@v4
