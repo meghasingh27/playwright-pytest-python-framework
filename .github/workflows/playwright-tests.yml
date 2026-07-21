@@ -69,9 +69,9 @@ jobs:
       - name: Execute Tests
         run: |
           pytest \
-          --browser=${{ github.event.inputs.browser || 'chromium' }} \
-          --env=${{ github.event.inputs.environment || 'QA' }} \
-          --headless=${{ github.event.inputs.headless || 'true' }}
+            --browser=${{ github.event.inputs.browser || 'chromium' }} \
+            --env=${{ github.event.inputs.environment || 'QA' }} \
+            --headless
 
       - name: Upload HTML Report
         if: always()
