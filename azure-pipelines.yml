@@ -2,7 +2,8 @@ trigger:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'MySelfHostedPool'
+  # vmImage: 'ubuntu-latest'
 
 steps:
 
@@ -18,7 +19,7 @@ steps:
 
 - script: |
     python -m playwright install
-    python -m playwright install-deps
+    # python -m playwright install-deps
   displayName: 'Install Playwright Browsers'
 
 - script: |
