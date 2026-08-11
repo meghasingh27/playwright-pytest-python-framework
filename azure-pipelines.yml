@@ -1,6 +1,14 @@
 trigger:
 - main
 
+schedules:
+- cron: "30 3 * * *"
+  displayName: Daily Playwright Tests
+  branches:
+    include:
+    - main
+  always: true
+
 pool:
   name: 'MySelfHostedPool'
 
