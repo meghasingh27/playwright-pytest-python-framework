@@ -1,6 +1,9 @@
 trigger:
 - main
 
+pr:
+- main
+
 schedules:
 - cron: "30 3 * * *"
   displayName: Daily Playwright Tests
