@@ -55,3 +55,5 @@ steps:
   inputs:
     PathtoPublish: 'logs'
     ArtifactName: 'Logs'
+
+# PR validation trigger test
