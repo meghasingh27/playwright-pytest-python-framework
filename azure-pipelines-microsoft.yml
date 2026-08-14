@@ -1,0 +1,47 @@
+trigger: none
+
+pr: none
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+
+- task: UsePythonVersion@0
+  displayName: 'Use Python 3.12'
+  inputs:
+    versionSpec: '3.12'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install Dependencies'
+
+- script: |
+    python -m playwright install
+  displayName: 'Install Playwright Browsers'
+
+- script: |
+    pytest --browser=chromium --env=QA --headless
+  displayName: 'Run Playwright Tests'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish HTML Report'
+  condition: always()
+  inputs:
+    PathtoPublish: 'reports'
+    ArtifactName: 'HTML-Report'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Screenshots'
+  condition: failed()
+  inputs:
+    PathtoPublish: 'screenshots'
+    ArtifactName: 'Screenshots'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Logs'
+  condition: always()
+  inputs:
+    PathtoPublish: 'logs'
+    ArtifactName: 'Logs'
